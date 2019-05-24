@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -28,9 +29,88 @@
                 <input type="submit" class="input_sub" value="登 录">
             </form>
         </div>
-
     </div> 
 
+    <!-- 提示框 -->
+    <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">提示信息:</h4>
+                </div>
+                <div class="modal-body">
+                  <p>这是一个寂寞的天,下着有些伤心的雨</p>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+    <!-- 提示框 -->
 </body>
-
 </html>
+
+<script src="./js/jquery-1.12.4.min.js"></script>
+<script src="./js/bootstrap/js/bootstrap.min.js"></script>
+<script>
+
+        /* 1. 为登录按钮绑定点击事件
+        2. 获取用户名和密码
+        1. 非空判断
+        2. 为空 提示用户 
+        3. 不为空才往下执行
+        3. ajax调用接口
+        4. 数据返回之后
+        1. 成功  去首页
+        2. 失败 弹框提示用户 */
+
+$(function(){
+    // 去除form表单的默认事件
+    $(".login_form").submit(function(e){
+        e.preventDefault()
+    })
+
+    // 1. 为登录按钮绑定点击事件
+    $(".input_sub").click(function(){
+        // 2. 获取用户名和密码
+        var user_name=$(".input_txt").val()
+        var password=$(".input_pass").val()
+        // 1. 非空判断
+        if(user_name==""||password==""){
+            // 2. 为空 提示用户
+            $(".modal-body p").text("账号密码不能为空哦~")
+            $(".modal").modal()
+            return
+        }
+
+        // 3. ajax调用接口
+        $.ajax({
+            type:"post",
+            url:"https://autumnfish.cn/big/admin/login",
+            data:{
+                user_name:user_name,
+                password:password
+            },
+            success:function(backData){
+                console.log(backData);
+                // 成功  去首页
+                if(backData.code==200){
+                    $(".modal-body p").text("欢迎回来~")
+                    $('.modal').modal()
+                    // 给个计时器 显得有逼格
+                    setTimeout(function(){
+                    window.location.href="./index.html"
+                    },1500)
+                }else if(backData.code==400){
+                    // 失败 弹框提示用户 
+                    $(".modal-body p").text("账号密码输入错误,请重新输入~")
+                    $('.modal').modal()
+                }
+            }
+        })
+        
+        
+    })
+
+})
+
+</script>
