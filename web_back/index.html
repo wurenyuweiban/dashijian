@@ -17,7 +17,7 @@
       <a href="#" class="logo"><img src="images/logo02.png" alt="logo"/></a>
       <div class="user_info">
         <img src="images/2.jpg" alt="person" />
-        <span>欢迎&nbsp;&nbsp;李思思</span>
+        <span>欢迎&nbsp;&nbsp;<i style="font-style: normal;">李思思</i></span>
         <b>管理员</b>
       </div>
       <div class="menu">
@@ -200,7 +200,7 @@
     </script>
   </body>
 </html>
-
+<!-- 自己的逻辑 -->
 <script>
   $(function() {
     // 点击弹出提示框
@@ -220,5 +220,32 @@
             }
         })
     })
-  });
+        /* 请求地址：https://autumnfish.cn/big/admin/userinfo_get 
+
+        请求方式：get
+
+        请求参数：无
+
+        步骤
+
+        1. 进入个人中心页之后
+        2. 通过ajax获取个人中心数据
+        3. 数据获取到之后渲染到页面上 */
+
+// 进来后直接获取用户数据
+$.ajax({
+  type:"get",
+  url:"https://autumnfish.cn/big/admin/userinfo_get",
+  success:function(backData){
+    console.log(backData);
+    $(".user_info img").attr("src",backData.data.user_pic)
+
+    $(".user_info span i").text(backData.data.username)
+    
+    $(".user_center_link img").attr("src",backData.data.user_pic)
+
+  }
+})
+
+});
 </script>
