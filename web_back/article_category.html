@@ -249,7 +249,8 @@
       var slug = $(".textSlug").val();
 
       if(name==""||slug==""){
-        alert("请将数据补充完整!")
+        alert("请将内容补充完整")
+        return
       }
 
       $.ajax({
@@ -262,12 +263,13 @@
         success: function(backData) {
           console.log(backData);
           showList();
-
           if (backData.code == 200) {
             alert("新增成功")
             $(".textName").val("");
             $(".textSlug").val("");
             $("#addModal").modal("hide");
+          }else if(backData.code==400){
+            alert("名称或别名已存在,请检查")
           }
         }
       });
