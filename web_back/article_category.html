@@ -199,12 +199,16 @@
     <td>{{$value.slug}}</td>
     <td class="text-center">
       <a
-        href='javascript:editTr({"id":"1","slug":"uncategorized","name":"未分类"});'
-        class="btn btn-info btn-xs"
+        href='#'
+
+        lihai="{{$value.id}}"
+
+        class="btn btn-info btn-xs bianji"
+        
       >
         编辑
       </a>
-      <a href="javascript:deleteTr( 1 );" class="btn btn-danger btn-xs">
+      <a href="#" lihai="{{$value.id}}" class="btn btn-danger btn-xs shanchu">
         删除
       </a>
     </td>
@@ -234,7 +238,7 @@
 
     showList();
 
-    //     请求地址：https://autumnfish.cn/big/admin/category_add
+    // 请求地址：https://autumnfish.cn/big/admin/category_add
 
     // 请求方式：post
 
@@ -245,8 +249,8 @@
     // slug	string	别名
     //     // 新增分类
     $(".btn-primary").click(function() {
-      var name = $(".textName").val();
-      var slug = $(".textSlug").val();
+      var name = $(".textName").val().trim();
+      var slug = $(".textSlug").val().trim();
 
       if(name==""||slug==""){
         alert("请将内容补充完整")
@@ -274,6 +278,37 @@
         }
       });
     });
+
+// 删除 删除
+// 删除文章
+// 请求地址：https://autumnfish.cn/big/admin/·
+
+// 请求方式：post
+
+$("tbody").on("click",".shanchu",function(){
+
+  var id=parseInt($(this).attr("lihai"))
+  console.log(id);
+  
+$.ajax({
+  type:"post",
+  url:"https://autumnfish.cn/big/admin/category_delete",
+  data:{
+    id:id
+  },
+  success:function(backData){
+    console.log(backData);
+    if(backData.code==200){
+      $(this).parent().parent().remove()
+      showList()
+    }
+  }
+})
+  
+
+})
+
+
 
 
   });
