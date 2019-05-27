@@ -103,7 +103,7 @@
               <td colspan="3" class="text-center">
                 <a
                   href="#"
-                  class="btn btn-success"
+                  class="btn btn-success btn-add"
                   data-toggle="modal"
                   data-target="#addModal"
                   >新增分类</a
@@ -129,14 +129,17 @@
           </div>
           <div class="modal-body">
             <form>
+
+                <input type="hidden" name="id">
               <div class="form-group">
                 <label for="recipient-name" class="control-label"
                   >分类名称:</label
                 >
                 <input
                   type="text"
-                  class="form-control textName"
+                  class="form-control"
                   id="recipient-name"
+                  name="name"
                 />
               </div>
               <div class="form-group">
@@ -145,8 +148,9 @@
                 >
                 <input
                   type="text"
-                  class="form-control textSlug"
+                  class="form-control"
                   id="recipient-name"
+                  name="slug"
                 />
               </div>
             </form>
@@ -157,7 +161,7 @@
             </button>
             <button type="button" class="btn btn-primary" id="model_add">
               新增
-            </button>
+            </button> 
           </div>
         </div>
       </div>
@@ -179,12 +183,12 @@
       //   $("#addModal").modal("hide");
       // });
 
-      $(".category_table").delegate("a", "click", function() {
-        if ($(this).hasClass("btn-info")) {
-          $("#addModal .modal-title").html("修改分类名称");
-          $("#addModal").modal("show");
-        }
-      });
+      // $(".category_table").delegate("a", "click", function() {
+      //   if ($(this).hasClass("btn-info")) {
+      //     $("#addModal .modal-title").html("修改分类名称");
+      //     $("#addModal").modal("show");
+      //   }
+      // });
     </script>
   </body>
 </html>
@@ -193,26 +197,19 @@
 
 <!-- 模板 -->
 <script id="cate" type="text/html">
-    {{each data}}
+  {{each data}}
   <tr>
     <td>{{$value.name}}</td>
     <td>{{$value.slug}}</td>
     <td class="text-center">
-      <a
-        href='#'
-
-        lihai="{{$value.id}}"
-
-        class="btn btn-info btn-xs bianji"
-
-      >
+      <a href='javascript:editTr({"id":"{{$value.id}}","slug":"{{$value.slug}}","name":"{{$value.name}}"});'  class="btn btn-info btn-xs ">
         编辑
       </a>
-      <a href="#" lihai="{{$value.id}}" class="btn btn-danger btn-xs shanchu">
+      <a href="javascript:deleteTr( {{$value.id}} );" class="btn btn-danger btn-xs ">
         删除
       </a>
     </td>
-  </tr>;
+  </tr>; 
   {{/each}}
 </script>
 
@@ -248,15 +245,86 @@
     // name	string	类别名称
     // slug	string	别名
     //     // 新增分类
-    $(".btn-primary").click(function() {
-      var name = $(".textName")
-        .val()
-        .trim();
-      var slug = $(".textSlug")
-        .val()
-        .trim();
+   
+     // 删除 删除
+    // 删除文章
+    // 请求地址：http://localhost:8000/admin/category_delete
 
-      if (name == "" || slug == "") {
+    // 请求方式：post
+
+    window.deleteTr=function(id){
+      $.ajax({
+        url:"http://localhost:8000/admin/category_delete",
+        type:"post",
+        data:{
+          id:id
+        },
+        success:function(backData){
+          console.log(backData);
+          if(backData.code==200){
+            showList()
+          }
+        }
+      })
+
+
+    }
+
+    // 点击编辑按钮改变弹出框得样式
+    $(".category_table").on("click","a.btn-info", function() {
+      $("#addModal .modal-title").html("修改分类名称");
+      $("#model_add").text("修改").addClass("btn-success")
+      $("#addModal").modal("show");
+    });
+
+    // 点击新增把样式还原
+    $(".btn-add").click(function(){
+      $("#addModal .modal-title").html("新增分类");
+      $("#model_add").text("新增").removeClass("btn-success")
+    })
+    
+
+
+
+    window.editTr=function(data){
+      console.log(data);
+      for(var key in data){
+        $("input[name="+key+"]").val(data[key])
+      }
+    }
+
+
+    $("#model_add").click(function(){
+      console.log( $("from").serialize());
+      // 如果有btn-success类名就是编辑
+      
+
+    // 请求地址：http://localhost:8000/admin/category_edit
+
+    // 请求方式：post
+
+    // 请求参数：
+
+    //   名称  	类型    	说明  
+    //   id  	number	文章id
+    //   name	string	类别名称
+    //   slug	string	别名  
+      if($(this).hasClass("btn-success")){
+        $.ajax({
+          url:"http://localhost:8000/admin/category_edit",
+          type:"post",
+          data:$("form").serialize(),
+          success:function(backData){
+            console.log(backData);
+            alert("修改成功")
+            $(".form-control").val("");
+            $("#addModal").modal("hide")
+            showList()
+          }
+        })
+      }else{
+
+      if ($(".form-control").val()=="") {g
         alert("请将内容补充完整");
         return;
       }
@@ -264,24 +332,38 @@
       $.ajax({
         type: "post",
         url: "http://localhost:8000/admin/category_add",
-        data: {
-          name: name,
-          slug: slug
-        },
+        data: $("form").serialize(),
         success: function(backData) {
           console.log(backData);
           showList();
           if (backData.code == 200) {
             alert("新增成功");
-            $(".textName").val("");
-            $(".textSlug").val("");
+            $(".form-control").val("");
             $("#addModal").modal("hide");
           } else if (backData.code == 400) {
             alert("名称或别名已存在,请检查");
           }
         }
       });
-    });
+
+      }
+      
+
+
+    })
+
+
+
+
+    
+
+
+
+
+
+
+    
+
 
     // 删除 删除
     // 删除文章
@@ -289,66 +371,65 @@
 
     // 请求方式：post
 
-    $("tbody").on("click", ".shanchu", function() {
-      var id = parseInt($(this).attr("lihai"));
-      console.log(id);
+    // $("tbody").on("click", ".shanchu", function() {
+    //   var id = parseInt($(this).attr("lihai"));
+    //   console.log(id);
 
-      $.ajax({
-        type: "post",
-        url: "http://localhost:8000/admin/category_delete",
-        data: {
-          id: id
-        },
-        success: function(backData) {
-          console.log(backData);
-          if (backData.code == 200) {
-            $(this)
-              .parent()
-              .parent()
-              .remove();
-              // alert("删除成功")
-            showList();
-          }
-        }
-      });
-    });
+    //   $.ajax({
+    //     type: "post",
+    //     url: "http://localhost:8000/admin/category_delete",
+    //     data: {
+    //       id: id
+    //     },
+    //     success: function(backData) {
+    //       console.log(backData);
+    //       if (backData.code == 200) {
+    //         $(this)
+    //           .parent()
+    //           .parent()
+    //           .remove();
+    //         // alert("删除成功")
+    //         showList();
+    //       }
+    //     }
+    //   });
+    // });
 
     // 编辑类别
 
-// 请求地址：http://localhost:8000/admin/category_edit
+    // 请求地址：http://localhost:8000/admin/category_edit
 
-// 请求方式：post
+    // 请求方式：post
 
-// 请求参数：
+    // 请求参数：
 
-$("tbody").on("click", ".bianji", function(){
+  //   $("tbody").on("click", ".bianji", function() {
+  //     var id = parseInt($(this).attr("lihai"));
 
-  var id = parseInt($(this).attr("lihai"))
+  //     var name = $(this)
+  //       .parent()
+  //       .prev()
+  //       .prev()
+  //       .text();
+  //     console.log(name);
+  //     var slug = $(this)
+  //       .parent()
+  //       .prev()
+  //       .text();
+  //     console.log(slug);
 
-  var name = $(this).parent().prev().prev().text()
-  console.log(name);
-  var slug =  $(this).parent().prev().text()
-  console.log(slug);
-
-  $.ajax({
-    type:"post",
-    url:"http://localhost:8000/admin/category_edit",
-    data:{
-      id:id,
-      name:name,
-      slug:slug
-    },
-    success:function(backData){
-      console.log(backData);
-    }
-  })
-
-})
-
-
-});
-
-
-
-
+  //     $.ajax({
+  //       type: "post",
+  //       url: "http://localhost:8000/admin/category_edit",
+  //       data: {
+  //         id: id,
+  //         name: name,
+  //         slug: slug
+  //       },
+  //       success: function(backData) {
+  //         console.log(backData);
+  //       }
+  //     });
+  //   });
+  });
 </script>
