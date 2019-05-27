@@ -109,7 +109,7 @@ $("#exampleInputFile").change(function(){
 })
 
 // ------------------------------------------------------------------------
-/* 请求地址：https://autumnfish.cn/big/admin/userinfo_get 
+/* 请求地址：http://localhost:8000/admin/userinfo_get 
 
         请求方式：get
 
@@ -124,7 +124,7 @@ $("#exampleInputFile").change(function(){
 // 进来后直接获取用户数据
 $.ajax({
     type:"get",
-    url:"https://autumnfish.cn/big/admin/userinfo_get",
+    url:"http://localhost:8000/admin/userinfo_get",
     success:function(backData){
         console.log(backData);
         for(var key in backData.data){
@@ -140,7 +140,7 @@ $.ajax({
 
 $(".btn-success").click(function(e){
     e.preventDefault()
-    /* 请求地址：https://autumnfish.cn/big/admin/userinfo_edit 
+    /* 请求地址：http://localhost:8000/admin/userinfo_edit 
 
     请求方式：post
 
@@ -152,7 +152,7 @@ $(".btn-success").click(function(e){
 
     $.ajax({
         type:"post",
-        url:"https://autumnfish.cn/big/admin/userinfo_edit",
+        url:"http://localhost:8000/admin/userinfo_edit",
         data:formData,
         // 必须要设置两个属性
         contentType:false,

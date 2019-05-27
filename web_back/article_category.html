@@ -204,7 +204,7 @@
         lihai="{{$value.id}}"
 
         class="btn btn-info btn-xs bianji"
-        
+
       >
         编辑
       </a>
@@ -218,7 +218,7 @@
 
 <script>
   $(function() {
-    // 请求地址：https://autumnfish.cn/big/admin/category_search
+    // 请求地址：http://localhost:8000/admin/category_search
 
     //     请求方式：get
 
@@ -226,7 +226,7 @@
     function showList() {
       $.ajax({
         type: "get",
-        url: "https://autumnfish.cn/big/admin/category_search",
+        url: "http://localhost:8000/admin/category_search",
         success: function(backData) {
           console.log(backData);
 
@@ -238,7 +238,7 @@
 
     showList();
 
-    // 请求地址：https://autumnfish.cn/big/admin/category_add
+    // 请求地址：http://localhost:8000/admin/category_add
 
     // 请求方式：post
 
@@ -249,17 +249,21 @@
     // slug	string	别名
     //     // 新增分类
     $(".btn-primary").click(function() {
-      var name = $(".textName").val().trim();
-      var slug = $(".textSlug").val().trim();
+      var name = $(".textName")
+        .val()
+        .trim();
+      var slug = $(".textSlug")
+        .val()
+        .trim();
 
-      if(name==""||slug==""){
-        alert("请将内容补充完整")
-        return
+      if (name == "" || slug == "") {
+        alert("请将内容补充完整");
+        return;
       }
 
       $.ajax({
         type: "post",
-        url: "https://autumnfish.cn/big/admin/category_add",
+        url: "http://localhost:8000/admin/category_add",
         data: {
           name: name,
           slug: slug
@@ -268,48 +272,83 @@
           console.log(backData);
           showList();
           if (backData.code == 200) {
-            alert("新增成功")
+            alert("新增成功");
             $(".textName").val("");
             $(".textSlug").val("");
             $("#addModal").modal("hide");
-          }else if(backData.code==400){
-            alert("名称或别名已存在,请检查")
+          } else if (backData.code == 400) {
+            alert("名称或别名已存在,请检查");
           }
         }
       });
     });
 
-// 删除 删除
-// 删除文章
-// 请求地址：https://autumnfish.cn/big/admin/·
+    // 删除 删除
+    // 删除文章
+    // 请求地址：http://localhost:8000/admin/·
+
+    // 请求方式：post
+
+    $("tbody").on("click", ".shanchu", function() {
+      var id = parseInt($(this).attr("lihai"));
+      console.log(id);
+
+      $.ajax({
+        type: "post",
+        url: "http://localhost:8000/admin/category_delete",
+        data: {
+          id: id
+        },
+        success: function(backData) {
+          console.log(backData);
+          if (backData.code == 200) {
+            $(this)
+              .parent()
+              .parent()
+              .remove();
+              // alert("删除成功")
+            showList();
+          }
+        }
+      });
+    });
+
+    // 编辑类别
+
+// 请求地址：http://localhost:8000/admin/category_edit
 
 // 请求方式：post
 
-$("tbody").on("click",".shanchu",function(){
+// 请求参数：
 
-  var id=parseInt($(this).attr("lihai"))
-  console.log(id);
-  
-$.ajax({
-  type:"post",
-  url:"https://autumnfish.cn/big/admin/category_delete",
-  data:{
-    id:id
-  },
-  success:function(backData){
-    console.log(backData);
-    if(backData.code==200){
-      $(this).parent().parent().remove()
-      showList()
+$("tbody").on("click", ".bianji", function(){
+
+  var id = parseInt($(this).attr("lihai"))
+
+  var name = $(this).parent().prev().prev().text()
+  console.log(name);
+  var slug =  $(this).parent().prev().text()
+  console.log(slug);
+
+  $.ajax({
+    type:"post",
+    url:"http://localhost:8000/admin/category_edit",
+    data:{
+      id:id,
+      name:name,
+      slug:slug
+    },
+    success:function(backData){
+      console.log(backData);
     }
-  }
-})
-  
+  })
 
 })
 
 
+});
 
 
-  });
+
+
 </script>

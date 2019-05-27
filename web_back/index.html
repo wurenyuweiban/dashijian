@@ -210,7 +210,7 @@
     // 判断如果点了离开  就返回登录界面
     $(".btn-logout").click(function(){
         $.ajax({
-            url:"https://autumnfish.cn/big/admin/logout",
+            url:"http://localhost:8000/admin/logout",
             type:"post",
             success:function(backData){
                 console.log(backData);
@@ -220,7 +220,7 @@
             }
         })
     })
-        /* 请求地址：https://autumnfish.cn/big/admin/userinfo_get 
+        /* 请求地址：http://localhost:8000/admin/userinfo_get 
 
         请求方式：get
 
@@ -235,7 +235,7 @@
 // 进来后直接获取用户数据
 $.ajax({
   type:"get",
-  url:"https://autumnfish.cn/big/admin/userinfo_get",
+  url:"http://localhost:8000/admin/userinfo_get",
   success:function(backData){
     console.log(backData);
     $(".user_info img").attr("src",backData.data.user_pic)
