@@ -215,6 +215,7 @@
 
 <script>
   $(function() {
+    // 获取数据渲染到页面
     // 请求地址：http://localhost:8000/admin/category_search
 
     //     请求方式：get
@@ -226,7 +227,6 @@
         url: "http://localhost:8000/admin/category_search",
         success: function(backData) {
           console.log(backData);
-
           var html = template("cate", backData);
           $("tbody").html(html);
         }
@@ -281,6 +281,7 @@
     $(".btn-add").click(function(){
       $("#addModal .modal-title").html("新增分类");
       $("#model_add").text("新增").removeClass("btn-success")
+      $("form input").val("")
     })
     
 
@@ -295,10 +296,8 @@
 
 
     $("#model_add").click(function(){
-      console.log( $("from").serialize());
-      // 如果有btn-success类名就是编辑
-      
-
+      // console.log( $("from").serialize());
+     
     // 请求地址：http://localhost:8000/admin/category_edit
 
     // 请求方式：post
@@ -309,6 +308,9 @@
     //   id  	number	文章id
     //   name	string	类别名称
     //   slug	string	别名  
+
+     // 如果有btn-success类名就是编辑
+
       if($(this).hasClass("btn-success")){
         $.ajax({
           url:"http://localhost:8000/admin/category_edit",
@@ -317,14 +319,13 @@
           success:function(backData){
             console.log(backData);
             alert("修改成功")
-            $(".form-control").val("");
             $("#addModal").modal("hide")
             showList()
           }
         })
       }else{
 
-      if ($(".form-control").val()=="") {g
+      if ($(".form-control").val()=="") {
         alert("请将内容补充完整");
         return;
       }
@@ -348,22 +349,7 @@
 
       }
       
-
-
     })
-
-
-
-
-    
-
-
-
-
-
-
-    
-
 
     // 删除 删除
     // 删除文章
