@@ -23,11 +23,11 @@
           <div class="col-xs-6">
             <form class="form-inline">
               <select id="selCategory" name="" class="form-control input-sm">
-                <option>所有分类</option>
-                <option>未分类</option>
+                <option value="">所有分类</option>
+                <!-- <option>未分类</option>
                 <option>奇趣事</option>
                 <option>会生活</option>
-                <option>爱旅行</option>
+                <option>爱旅行</option> -->
               </select>
               <select id="selStatus" name="" class="form-control input-sm">
                 <option value="">所有状态</option>
@@ -310,17 +310,20 @@
           <td>{{$value.author}}</td>
           <td>{{$value.type}}</td>
           <td class="text-center">{{$value.date}}</td>
-
-
           <td class="text-center">{{$value.state}}</td>
-
-
           <td class="text-center">
               <a href="post-edit.html?id=995" class="btn btn-default btn-xs">编辑</a>
               <a href="javascript:deleteTr( 995 );" class="btn btn-danger btn-xs">删除</a>
           </td>
       </tr>
   {{/each}}
+</script>
+
+<script id="moban2" type="text/html">
+{{each data}}
+<option value="{{$value.id}}">{{$value.name}}</option>
+{{/each}}
+
 </script>
 
 <!-- 我的逻辑 -->
@@ -334,35 +337,19 @@
     // 请求参数：
 
     var myPage = 1;
-    function getdata() {
-      $.ajax({
-        url: "http://localhost:8000/admin/search",
-        type: "get",
-        data: {
-          page: myPage,
-          perpage: 10,
-          state: $("#selStatus").val()
-        },
-        success: function(backData) {
-          console.log(backData);
-          var html = template("moban", backData);
-          // console.log(html);
-          $("tbody").html(html);
-        }
-      });
-    }
 
-    //    默认一次
-    getdata();
+    var myTotalPage=20
 
     var $pagination=$(".pagination")
 
-    var duixiang = {
-      totalPages: 20,
+
+    var defaultOpts = {
+      totalPages: myTotalPage,
       first: "第一页",
       prev: "上一页",
       next: "下一页",
       last: "尾页",
+      visiblePages: 3,
       onPageClick:function(event,page){
 
             myPage=page
@@ -372,12 +359,62 @@
 
     };
 
-    $pagination.twbsPagination(duixiang)
+    $pagination.twbsPagination(defaultOpts)
+
+    
+    function getdata() {
+      $.ajax({
+        url: "http://localhost:8000/admin/search",
+        type: "get",
+        data: {
+          page: myPage,
+          perpage: 10,
+          state: $("#selStatus").val(),
+          type:$("#selCategory").val()
+        },
+        success: function(backData) {
+          console.log(backData);
+          var html = template("moban", backData);
+          $("tbody").html(html);
+
+          if( myTotalPage != backData.totalPage){
+            myTotalPage = backData.totalPage
+
+            $pagination.twbsPagination('destroy');
+
+            var currentPage=1
+            $pagination.twbsPagination(
+              $.extend({}, defaultOpts, {
+                startPage: currentPage,
+                totalPages: myTotalPage
+            }));
+          }
+        }
+      });
+    }
+
+    //    默认一次
+    getdata();
 
 
     $("#btnSearch").click(function(e){
         e.preventDefault()
         getdata();
     })
+
+
+    // 获取数据 给分类多选框
+    $.ajax({
+      url:"http://localhost:8000/admin/category_search",
+      type:"get",
+      success:function(backData){
+        console.log(backData);
+        var html= template("moban2",backData)
+        $("#selCategory").append(html)
+      }
+    })
+
+
+
   });
 </script>
